@@ -1,99 +1,51 @@
-// Import SHA-1 package for encryption
-const generateHash = require('sha1');
+// Import elliptic for Public Private Key Pair generation
+const EC = require('elliptic').ec;
+// Select secp256k1 as generation format
+const ec = new EC('secp256k1');
+// Import Blockchain and Transaction classes from blockchain.js
+const {Blockchain, Transaction} = require('./blockchain');
+// Import key from keyGenerator.js
+const key = require('./keyGenerator');
 
-// Object constructor function that creates a Block
-// @params {Number} Unique Block ID
-// @params {String} Block's creation date
-// @params {Object} Block's data
-// previousHash is assigned automatically when adding the Block
-// for Genesis Block, previousHash remains empty
-function Block(id, timestamp, transactions) {
-  this.id = id;
-  this.timestamp = timestamp;
-  this.transactions = transactions;
-  this.previousHash = '';
-  this.hash = this.getHash();
-}
+/***** TESTING *****/
 
-// _proto_ function that concatenates all properties of the Block
-// and returns the hash generated with SHA-1
-Block.prototype.getHash = function() {
-  const message = this.id + this.timestamp + JSON.stringify(this.transactions) + this.previousHash;
-  return generateHash(message);
-}
+// Hold the key generated from keyGenerator.js
+const myKey = ec.keyFromPrivate(key.privateKey);
+// Hold public key as wallet address
+const myWalletAddress = myKey.getPublic('hex');
 
-// Object constructor function that creates a Blockchain,
-// creates and adds genesis Block with the timestamp as current date
-// @params {Number} ID of the Genesis Block
-// @params {Object} Transactions to include in the Genesis Block
-function Blockchain(genesisBlockId, genesisBlockTransactions) {
-  const date = new Date();
-  const currentDate = `${date.getFullYear()}` + `${date.getMonth()+1}` + `${date.getDate()}`;
-  const genesisBlock = new Block(genesisBlockId, currentDate, genesisBlockTransactions);
-  this.chain = [genesisBlock];
-}
+// Create new Blockchain
+var foo = new Blockchain();
 
-// _proto_ function that assigns previousHash property,
-// updates the new Block's hash,
-// pushes the new Block to the Blockchain
-Blockchain.prototype.addBlock = function(newBlock) {
-  newBlock.previousHash = this.chain[this.chain.length - 1].hash;
-  newBlock.hash = newBlock.getHash();
-  this.chain.push(newBlock);
-}
+// Create new Transaction
+const tx1 = new Transaction(myWalletAddress, 'public key goes here', 10);
+// Sign Transaction
+tx1.signTransaction(myKey);
+// Add transaction to pendingTransactions
+foo.addTransaction(tx1);
 
-// _proto_ function that checks if any block
-// has been tampered with.
-Blockchain.prototype.isAuthentic = function() {
-  var currentBlock;
-  var previousBlock;
+// Start Mining
+console.log('\nStart the miner...');
+foo.minePendingTransactions(myWalletAddress);
 
-  // if there is only the genesis block in the chain
-  if (this.chain.length < 2) {
-    currentBlock = this.chain[0];
+// Log Balance after Mining
+console.log('\nMy balance is', foo.getBalanceOfAddress(myWalletAddress));
 
-    // compare stored hash value with current hash value
-    if (currentBlock.hash !== currentBlock.getHash()) return false;
-  } else {
-    // if there are more than 1 blocks in the chain
-    for (let i = 1; i < this.chain.length; i++) {
-      currentBlock = this.chain[i];
-      previousBlock = this.chain[i - 1];
+console.log("Next Transactions");
 
-      // compare stored has value with current hash value
-      if (currentBlock.hash !== currentBlock.getHash()) return false;
-      // check block's link in chain by comparing previous block's hash value
-      // with previousHash property of the block
-      if (currentBlock.previousHash !== previousBlock.hash) return false;
-    }
-  }
-  return true;
-}
+// Create new Transaction
+const tx2 = new Transaction(myWalletAddress, 'public key goes here', 10);
+// Sign Transaction
+tx1.signTransaction(myKey);
+// Add transaction to pendingTransactions
+foo.addTransaction(tx1);
 
-/******* TESTING ********/
+// Start Mining
+console.log('\nStart the miner...');
+foo.minePendingTransactions(myWalletAddress);
 
-// Create new blockchain
-var boo = new Blockchain(0, {
-  test: "Block 1"
-});
+// Log Balance after Mining
+console.log('\nMy balance is', foo.getBalanceOfAddress(myWalletAddress));
 
-//Create new block
-var foo = new Block(1, 202061, {
-  test: "Block 2"
-});
 
-// Add new block
-boo.addBlock(foo);
-
-// Print blockchain
-console.log(boo.chain);
-
-// Check Authenticity
-console.log("Blockchain is authentic:", boo.isAuthentic());
-
-// Tamper transactions in second block
-boo.chain[1].transactions = {test: "Hacked"};
-console.log("Block 2 compromised");
-
-// Check Authenticity
-console.log("Blockchain is authentic:", boo.isAuthentic());
+// Further Testing for Checking Validity
