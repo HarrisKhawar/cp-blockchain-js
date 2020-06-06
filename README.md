@@ -1,10 +1,12 @@
 # cp-blockchain-js
 
 Curricular Project - Blockchain in Javascript
+Google Drive Link: https://drive.google.com/drive/folders/1cHc3_Ln6b_3cOAxnLQEsKlsmBcMNT4aK?usp=sharing
 
 # Usage
-To skip setting up environment, visit:  
-Code Sandbox Link - https://codesandbox.io/s/serene-butterfly-7dn2h?file=/src/index.js
+Download Repository
+In directory run:
+`$ node ../src/app.js`
 
 # Dependencies:
   - sha1
