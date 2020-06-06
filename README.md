@@ -1,4 +1,4 @@
-# cp-blockchain-js 
+# cp-blockchain-js
 
 Curricular Project - Blockchain in Javascript
 
@@ -11,6 +11,6 @@ Code Sandbox Link - https://codesandbox.io/s/serene-butterfly-7dn2h?file=/src/in
   - elliptic
 
 # Log
-Implemented very basic structure and functionalities of Blockchain - Sunday, May 31, 2020 (Harris)
-Added Proof of Work implementation - Friday, June 5, 2020 (Harris)
-Added Signing of Transactions - Saturday, June 6, 2020 (Harris)
+- Implemented very basic structure and functionalities of Blockchain - Sunday, May 31, 2020 (Harris)
+- Added Proof of Work implementation - Friday, June 5, 2020 (Harris)
+- Added Signing of Transactions - Saturday, June 6, 2020 (Harris)
